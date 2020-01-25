@@ -30,7 +30,8 @@ var dimension$0 = 0,
 	_floor = Math.floor,
 	_ceil = Math.ceil,
 	_pow = Math.pow,
-	_sqrt = Math.sqrt;
+	_sqrt = Math.sqrt,
+	_random = Math.random;
 
 Object.assign( VectorN.prototype, {
 
@@ -69,10 +70,11 @@ Object.assign( VectorN.prototype, {
 
 		dimension$0 = this.dimension;
 		components$0 = this.components;
+		components$1 = vector.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
 
-			components$0[ i$0 ] = vector.components[ i ];
+			components$0[ i$0 ] = components$1[ i$0 ];
 
 		}
 
@@ -83,6 +85,55 @@ Object.assign( VectorN.prototype, {
 	clone: function() {
 
 		return new this.constructor( [ ...this.components ] );
+
+	},
+
+	randomFloat: function( min = 0, max = 1 ) {
+
+		dimension$0 = this.dimension;
+		components$0 = this.components;
+		delta$0 = max - min;
+
+		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
+
+			components$0[ i$0 ] = ( _random() * delta$0 ) + min;
+
+		}
+
+		return this;
+
+	},
+
+	randomInteger: function( minInteger = 0, maxInteger = 10 ) {
+
+		dimension$0 = this.dimension;
+		components$0 = this.components;
+		delta$0 = maxInteger - minInteger;
+
+		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
+
+			components$0[ i$0 ] = _round( _random() * delta$0 ) + minInteger;
+
+		}
+
+		return this;
+
+	},
+
+	randomPrecision: function( min = 0, max = 1, precision = .1 ) {
+
+		dimension$0 = this.dimension;
+		components$0 = this.components;
+		delta$0 = maxInteger - minInteger;
+		scalar$0 = 1 / precision;
+
+		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
+
+			components$0[ i$0 ] = precision * _round( _random() * delta$0 * scalar$0 ) + minInteger;
+
+		}
+
+		return this;
 
 	},
 
