@@ -4,17 +4,36 @@ function VectorN( components, copyArray = false ) {
 
 	this.components = copyArray === true ? [ ...components ] : components;
 
-	this.dimension = this.components.length;
-
 };
 
+Object.defineProperty( VectorN.prototype, 'dimension', {
+
+	get: function() { 
+
+		return this.components.length;
+
+	}
+
+} );
+
+if( Number.EPSILON === undefined ) {
+    
+    Number.EPSILON = Math.pow( 2, - 52 );
+
+}
+
 var dimension$0 = 0,
+	dimension$1 = 0,
 	length$0 = 0,
 	i$0 = 0,
+	i$1 = 0,
 	
 	components$0,
 	components$1,
 	components$2,
+
+	component$0 = 0,
+	component$1 = 0,
 
 	sum$0 = 0,
 	delta$0 = 0,
@@ -22,6 +41,8 @@ var dimension$0 = 0,
 	result$0 = 0,
 	result$1 = 0,
 	denominator$0 = 0,
+
+	conditional$0 = true,
 
 	_round = Math.round,
 	_min = Math.min,
@@ -35,9 +56,10 @@ var dimension$0 = 0,
 
 Object.assign( VectorN.prototype, {
 
+
 	set: function( ...components ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -52,7 +74,7 @@ Object.assign( VectorN.prototype, {
 
 	setScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 
@@ -68,7 +90,7 @@ Object.assign( VectorN.prototype, {
 
 	copy: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -90,7 +112,7 @@ Object.assign( VectorN.prototype, {
 
 	randomFloat: function( min = 0, max = 1 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		delta$0 = max - min;
 
@@ -106,7 +128,7 @@ Object.assign( VectorN.prototype, {
 
 	randomInteger: function( minInteger = 0, maxInteger = 10 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		delta$0 = maxInteger - minInteger;
 
@@ -122,7 +144,7 @@ Object.assign( VectorN.prototype, {
 
 	randomPrecision: function( min = 0, max = 1, precision = .1 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		delta$0 = maxInteger - minInteger;
 		scalar$0 = 1 / precision;
@@ -140,7 +162,7 @@ Object.assign( VectorN.prototype, {
 	flatSum: function() {
 
 		sum$0 = 0;
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
 
@@ -155,7 +177,7 @@ Object.assign( VectorN.prototype, {
 	flatProduct: function() {
 
 		product$ = 1;
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
 
@@ -175,7 +197,7 @@ Object.assign( VectorN.prototype, {
 
 	negate: function() {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -190,7 +212,7 @@ Object.assign( VectorN.prototype, {
 
 	invert: function() {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -205,7 +227,7 @@ Object.assign( VectorN.prototype, {
 
 	abs: function() {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -220,7 +242,7 @@ Object.assign( VectorN.prototype, {
 
 	round: function( precision = 1 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -235,7 +257,7 @@ Object.assign( VectorN.prototype, {
 
 	floor: function( precision = 1 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -250,7 +272,7 @@ Object.assign( VectorN.prototype, {
 
 	ceil: function( precision = 1 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -265,7 +287,7 @@ Object.assign( VectorN.prototype, {
 
 	roundToVector: function( vector, precision = 1 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -283,7 +305,7 @@ Object.assign( VectorN.prototype, {
 
 	roundToScalar: function( scalar, precision = 1 ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -300,7 +322,7 @@ Object.assign( VectorN.prototype, {
 
 	clamp: function( minVector, maxVector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = minVector.components;
 		components$2 = maxVector.components;
@@ -317,7 +339,7 @@ Object.assign( VectorN.prototype, {
 
 	clampScalar: function( minScalar, maxScalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -338,7 +360,7 @@ Object.assign( VectorN.prototype, {
 
 		var multiplier = _max( min, _min( max, length ) ) / length;
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -353,7 +375,7 @@ Object.assign( VectorN.prototype, {
 
 	min: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -369,7 +391,7 @@ Object.assign( VectorN.prototype, {
 
 	minScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -384,7 +406,7 @@ Object.assign( VectorN.prototype, {
 
 	max: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -400,7 +422,7 @@ Object.assign( VectorN.prototype, {
 
 	maxScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -415,7 +437,7 @@ Object.assign( VectorN.prototype, {
 
 	mod: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -430,7 +452,7 @@ Object.assign( VectorN.prototype, {
 
 	modScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -445,7 +467,7 @@ Object.assign( VectorN.prototype, {
 
 	add: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -460,7 +482,7 @@ Object.assign( VectorN.prototype, {
 
 	addScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -475,7 +497,7 @@ Object.assign( VectorN.prototype, {
 
 	subtract: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -490,7 +512,7 @@ Object.assign( VectorN.prototype, {
 
 	subtractScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -505,7 +527,7 @@ Object.assign( VectorN.prototype, {
 
 	multiply: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -521,7 +543,7 @@ Object.assign( VectorN.prototype, {
 
 	multiplyScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -536,7 +558,7 @@ Object.assign( VectorN.prototype, {
 
 	divide: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -551,7 +573,7 @@ Object.assign( VectorN.prototype, {
 
 	divideScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		scalar$0 = 1 / scalar;
@@ -568,7 +590,7 @@ Object.assign( VectorN.prototype, {
 
 	not: function() {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -583,7 +605,7 @@ Object.assign( VectorN.prototype, {
 
 	and: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -599,7 +621,7 @@ Object.assign( VectorN.prototype, {
 
 	andScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -614,7 +636,7 @@ Object.assign( VectorN.prototype, {
 
 	or: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -630,7 +652,7 @@ Object.assign( VectorN.prototype, {
 
 	orScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -645,7 +667,7 @@ Object.assign( VectorN.prototype, {
 
 	xor: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -661,7 +683,7 @@ Object.assign( VectorN.prototype, {
 
 	xorScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -676,7 +698,7 @@ Object.assign( VectorN.prototype, {
 
 	leftShift: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -692,7 +714,7 @@ Object.assign( VectorN.prototype, {
 
 	leftShiftScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -707,7 +729,7 @@ Object.assign( VectorN.prototype, {
 
 	rightShift: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -723,7 +745,7 @@ Object.assign( VectorN.prototype, {
 
 	rightShiftScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -738,7 +760,7 @@ Object.assign( VectorN.prototype, {
 
 	zeroFillRightShift: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -754,7 +776,7 @@ Object.assign( VectorN.prototype, {
 
 	zeroFillRightShiftScalar: function( scalar ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
@@ -769,7 +791,7 @@ Object.assign( VectorN.prototype, {
 
 	dot: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -787,7 +809,7 @@ Object.assign( VectorN.prototype, {
 
 	lengthSq: function() {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		sum$0 = 0;
@@ -804,7 +826,7 @@ Object.assign( VectorN.prototype, {
 
 	length: function() {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		sum$0 = 0;
@@ -821,7 +843,7 @@ Object.assign( VectorN.prototype, {
 
 	normalize: function() {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 
 		sum$0 = 0;
@@ -848,7 +870,7 @@ Object.assign( VectorN.prototype, {
 
 	lerp: function( targetVector, alpha ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = targetVector.components;
 
@@ -864,7 +886,7 @@ Object.assign( VectorN.prototype, {
 
 	project: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = targetVector.components;
 		sum$0 = 0;
@@ -892,7 +914,7 @@ Object.assign( VectorN.prototype, {
 
 	reflect: function( normalVector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = normalVector.components;
 		scalar$0 = 0;
@@ -936,7 +958,7 @@ Object.assign( VectorN.prototype, {
 
 	distanceTo: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;		
 
@@ -955,7 +977,7 @@ Object.assign( VectorN.prototype, {
 
 	manhattanDistanceTo: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -973,7 +995,7 @@ Object.assign( VectorN.prototype, {
 
 	minkowskiDistanceTo: function( vector, order ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 
 		sum$0 = 0;
 
@@ -989,7 +1011,7 @@ Object.assign( VectorN.prototype, {
 
 	chebyshevDistanceTo: function( vector, direction = + Infinity ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -1021,7 +1043,7 @@ Object.assign( VectorN.prototype, {
 
 	equals: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -1041,7 +1063,7 @@ Object.assign( VectorN.prototype, {
 
 	almostEquals: function( vector, epsilon = Number.EPSILON ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -1081,7 +1103,7 @@ Object.assign( VectorN.prototype, {
 
 	isParallel: function( vector ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -1102,7 +1124,7 @@ Object.assign( VectorN.prototype, {
 
 	isAlmostParallel: function( vector, epsilon = Number.EPSILON ) {
 
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		components$0 = this.components;
 		components$1 = vector.components;
 
@@ -1122,10 +1144,88 @@ Object.assign( VectorN.prototype, {
 
 	},
 
+	isSubVector: function( vector ) {
+
+		components$0 = this.components;
+		components$1 = vector.components;
+		dimension$0 = components$0.length;
+		dimension$1 = components$1.length;
+
+		if( dimension$0 < dimension$1 ) return false;
+
+		delta$0 = dimension$0 - dimension$1;
+		conditional$0 = true;
+
+		for( i$0 = 0; i$0 !== delta$0; i$0 ++ ) {
+
+			for( i$1 = 0; i$1 !== dimension$1; i$1 ++ ) {
+
+				if( components$0[ i$0 + i$1 ] !== components$0[ i$1 ] ) {
+
+					conditional$0 = false;
+					break;
+
+				}
+
+			}
+
+			if( conditional$0 === true ) {
+
+				return true;
+
+			}
+
+		}
+
+		return false;
+
+	},
+
+	isAlmostSubVector: function( vector, epsilon = Number.EPSILON ) {
+
+		components$0 = this.components;
+		components$1 = vector.components;
+		dimension$0 = components$0.length;
+		dimension$1 = components$1.length;
+
+		if( dimension$0 < dimension$1 ) return false;
+
+		delta$0 = dimension$0 - dimension$1;
+		conditional$0 = true;
+
+		for( i$0 = 0; i$0 !== delta$0; i$0 ++ ) {
+
+			for( i$1 = 0; i$1 !== dimension$1; i$1 ++ ) {
+
+				component$0 = components$0[ i$0 + i$1 ];
+				component$1 = components$1[ i$1 ];
+
+				if( component$0 < component$1 - epsilon ||
+					component$0 > component$1 + epsilon ) {
+
+					conditional$0 = false;
+					break;
+
+				}
+
+			}
+
+			if( conditional$0 === true ) {
+
+				return true;
+
+			}
+
+		}
+
+		return false;
+
+	},
+
 	toArray: function( array = [], offset = 0, stride = 1 ) {
 
 		components$0 = this.components;
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		sum$0 = offset;
 
 		array[ sum$0 ] = components$0[ 0 ];
@@ -1143,7 +1243,7 @@ Object.assign( VectorN.prototype, {
 	fromArray: function( array, offset = 0, stride = 1 ) {
 
 		components$0 = this.components;
-		dimension$0 = this.dimension;
+		dimension$0 = this.components.length;
 		sum$0 = offset;
 
 		components$0[ 0 ] = array[ sum$0 ];
@@ -1161,7 +1261,7 @@ Object.assign( VectorN.prototype, {
 	toString: function( separator = ',', string = '' ) {
 
 		components$0 = this.components;
-		dimension$0 = this.dimension - 1;
+		dimension$0 = this.components.length - 1;
 
 		for( i$0 = 0; i$0 !== dimension$0; i$0 ++ ) {
 
